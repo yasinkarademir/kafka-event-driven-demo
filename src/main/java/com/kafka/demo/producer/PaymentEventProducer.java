@@ -31,6 +31,7 @@ public class PaymentEventProducer {
                 request.customerId(),
                 request.amount(),
                 request.currency(),
+                request.scenario(),
                 Instant.now()
         );
 

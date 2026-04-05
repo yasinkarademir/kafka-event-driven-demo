@@ -8,5 +8,6 @@ public record PaymentRequestedEvent(
         String customerId,
         BigDecimal amount,
         String currency,
+        String scenario,
         Instant createdAt
 ) {}

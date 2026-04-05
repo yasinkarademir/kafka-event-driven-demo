@@ -25,4 +25,20 @@ public class KafkaTopicConfig {
                 .replicas(1)
                 .build();
     }
+
+    @Bean
+    NewTopic paymentRequestedDltTopic(@Value("${app.topics.payment-requested-dlt}") String topicName) {
+        return TopicBuilder.name(topicName)
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    NewTopic paymentProcessedDltTopic(@Value("${app.topics.payment-processed-dlt}") String topicName) {
+        return TopicBuilder.name(topicName)
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
 }

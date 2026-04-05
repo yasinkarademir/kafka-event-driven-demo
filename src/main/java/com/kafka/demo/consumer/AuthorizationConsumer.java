@@ -6,6 +6,8 @@ import com.kafka.demo.producer.PaymentEventProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
@@ -21,8 +23,18 @@ public class AuthorizationConsumer {
     private final PaymentEventProducer paymentEventProducer;
 
     @KafkaListener(topics = "${app.topics.payment-requested}", groupId = "authorization-group")
-    public void consume(String message) {
+    public void consume(
+            String message,
+            @Header(value = KafkaHeaders.DELIVERY_ATTEMPT, required = false) Integer deliveryAttempt) {
+
         PaymentRequestedEvent event = fromJson(message, PaymentRequestedEvent.class);
+
+        log.info("Authorization consume -> paymentId={}, attempt={}, scenario={}",
+                event.paymentId(), normalizeAttempt(deliveryAttempt), event.scenario());
+
+        if ("FAIL_AUTH".equalsIgnoreCase(event.scenario())) {
+            throw new IllegalStateException("Authorization tarafinda bilincli hata tetiklendi");
+        }
 
         boolean approved = event.amount().compareTo(new BigDecimal("10000")) <= 0;
 
@@ -31,6 +43,7 @@ public class AuthorizationConsumer {
                 event.customerId(),
                 event.amount(),
                 event.currency(),
+                event.scenario(),
                 approved ? "APPROVED" : "REJECTED",
                 approved ? "Mock bank approval" : "Manual review required",
                 Instant.now()
@@ -49,4 +62,7 @@ public class AuthorizationConsumer {
         }
     }
 
+    private int normalizeAttempt(Integer deliveryAttempt) {
+        return deliveryAttempt == null ? 1 : deliveryAttempt;
+    }
 }

@@ -8,6 +8,7 @@ public record PaymentProcessedEvent(
         String customerId,
         BigDecimal amount,
         String currency,
+        String scenario,
         String status,
         String reason,
         Instant processedAt

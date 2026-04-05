@@ -9,6 +9,7 @@ public record PaymentRequest(
         @NotBlank String paymentId,
         @NotBlank String customerId,
         @NotNull BigDecimal amount,
-        @NotBlank String currency
+        @NotBlank String currency,
+        String scenario
 ) {
 }

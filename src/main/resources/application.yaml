@@ -16,3 +16,8 @@ app:
   topics:
     payment-requested: payment.requested.v1
     payment-processed: payment.processed.v1
+    payment-requested-dlt: payment.requested.v1.dlt
+    payment-processed-dlt: payment.processed.v1.dlt
+  retry:
+    max-attempts: 3
+    backoff-ms: 2000
